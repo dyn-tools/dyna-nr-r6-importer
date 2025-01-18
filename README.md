@@ -1,10 +1,11 @@
 # R6 Material Autosetup Tool for NinjaRipper
 
-This Blender add-on automates the material setup process for models extracted with NinjaRipper. Save time and effort by letting the tool handle the tedious work of fixing materials!
+This Blender add-on automates the material setup process for models extracted with NinjaRipper for Rainbow Six Siege. 
 
 ## Features
 - Automatically configures materials for models ripped from R6.
-- Streamlines your workflow by eliminating manual material setup.
+- Create Lights
+- Delete Trash
 
 ## Quick Start Guide
 
