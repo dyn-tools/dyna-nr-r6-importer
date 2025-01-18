@@ -1,4 +1,39 @@
 import bpy
+import os
+
+def append_shader_group(group_name):
+    """
+    Append a shader group from the shader_groups.blend file.
+    """
+    if group_name in [ng.name for ng in bpy.data.node_groups]:
+        return bpy.data.node_groups[group_name]
+
+    addon_path = os.path.dirname(os.path.abspath(__file__))
+    shader_file = os.path.join(addon_path, "shader_groups.blend")
+
+    print(f"Attempting to load shader group '{group_name}' from {shader_file}...")
+
+    # Append the shader group from the .blend file
+    with bpy.data.libraries.load(shader_file, link=False) as (data_from, data_to):
+        if group_name in data_from.node_groups:
+            data_to.node_groups.append(group_name)
+            print(f"Shader group '{group_name}' loaded successfully.")
+        else:
+            print(f"Shader group '{group_name}' not found in {shader_file}.")
+
+    return bpy.data.node_groups.get(group_name)
+
+def load_shader_groups():
+    """
+    Load the 'Siege Object BSDF' shader group.
+    """
+    shader_groups = ["Siege Object BSDF"]  # Add additional group names if needed
+    for group_name in shader_groups:
+        shader_group = append_shader_group(group_name)
+        if shader_group:
+            print(f"Shader group '{group_name}' loaded successfully.")
+        else:
+            print(f"Shader group '{group_name}' could not be loaded.")
 
 class NODE_OT_AutoSetup(bpy.types.Operator):
     """
@@ -9,9 +44,16 @@ class NODE_OT_AutoSetup(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
+        # Ensure shader groups are loaded before use
+        load_shader_groups()
+
         def instantiate_group(nodes, data_block_name):
             group = nodes.new(type='ShaderNodeGroup')
-            group.node_tree = bpy.data.node_groups[data_block_name]
+            shader_group = bpy.data.node_groups.get(data_block_name)
+            if shader_group:
+                group.node_tree = shader_group
+            else:
+                print(f"Failed to find shader group: {data_block_name}")
             return group
 
         def dyn_genlink(input, output, img_node, use_premul=None):
@@ -31,13 +73,13 @@ class NODE_OT_AutoSetup(bpy.types.Operator):
                 mat = obj.active_material
                 if mat is not None:
                     tree = mat.node_tree
-                    already_existingg = False
+                    already_existing = False
 
                     for node in tree.nodes:
                         if node.type == "GROUP" and node.node_tree and node.node_tree.name == 'Siege Object BSDF':
-                            already_existingg = True
+                            already_existing = True
 
-                    if not already_existingg:
+                    if not already_existing:
                         instantiate_group(mat.node_tree.nodes, 'Siege Object BSDF')
 
                     node_group = None
@@ -55,19 +97,19 @@ class NODE_OT_AutoSetup(bpy.types.Operator):
 
                         count = len(img_nodes)
                         config_switch = {
-                            2: {"USE-Premul": True,"Override Color": None, "Override Strength": None, "Diffuse": 0, "Alpha Input": 0, "PBR Multi": None,
-                             "Normal Base": 1, "Mix Factor": None, "Diffuse 2": None, "Alpha Input 2": None, "PBR Multi 2": None, "Normal Base 2": None},
+                            2: {"USE-Premul": True, "Override Color": None, "Override Strength": None, "Diffuse": 0, "Alpha Input": 0, "PBR Multi": None,
+                                 "Normal Base": 1, "Mix Factor": None, "Diffuse 2": None, "Alpha Input 2": None, "PBR Multi 2": None, "Normal Base 2": None},
                             3: {"USE-Premul": True, "Override Color": None, "Override Strength": None, "Diffuse": 0, "Alpha Input": 0, "PBR Multi": 2,
-                             "Normal Base": 1, "Mix Factor": None, "Diffuse 2": None, "Alpha Input 2": None, "PBR Multi 2": None, "Normal Base 2": None},
+                                 "Normal Base": 1, "Mix Factor": None, "Diffuse 2": None, "Alpha Input 2": None, "PBR Multi 2": None, "Normal Base 2": None},
                             4: {"USE-Premul": True, "Override Color": 3, "Override Strength": 3, "Diffuse": 0, "Alpha Input": 0, "PBR Multi": 2,
-                             "Normal Base": 1, "Mix Factor": None, "Diffuse 2": None, "Alpha Input 2": None, "PBR Multi 2": None, "Normal Base 2": None},
+                                 "Normal Base": 1, "Mix Factor": None, "Diffuse 2": None, "Alpha Input 2": None, "PBR Multi 2": None, "Normal Base 2": None},
                             5: {"USE-Premul": True, "Override Color": 3, "Override Strength": 3, "Diffuse": 0, "Alpha Input": 0, "PBR Multi": 2,
-                             "Normal Base": 1, "Mix Factor": None, "Diffuse 2": None, "Alpha Input 2": None, "PBR Multi 2": None, "Normal Base 2": None},
+                                 "Normal Base": 1, "Mix Factor": None, "Diffuse 2": None, "Alpha Input 2": None, "PBR Multi 2": None, "Normal Base 2": None},
                             6: {"Override Color": None, "Override Strength": None, "Diffuse": 3, "Alpha Input": None, "PBR Multi": 5,
-                             "Normal Base": 4, "Mix Factor": 0, "Diffuse 2": 0, "Alpha Input 2": None, "PBR Multi 2": 2, "Normal Base 2": 1},
+                                 "Normal Base": 4, "Mix Factor": 0, "Diffuse 2": 0, "Alpha Input 2": None, "PBR Multi 2": 2, "Normal Base 2": 1},
                             7: {"Override Color": None, "Override Strength": None, "Diffuse": 3, "Alpha Input": None, "PBR Multi": 5,
-                             "Normal Base": 4, "Mix Factor": 0, "Diffuse 2": 0, "Alpha Input 2": None, "PBR Multi 2": 2, "Normal Base 2": 1}
-                            }
+                                 "Normal Base": 4, "Mix Factor": 0, "Diffuse 2": 0, "Alpha Input 2": None, "PBR Multi 2": 2, "Normal Base 2": 1}
+                        }
                         default_config = {}
                         config = config_switch.get(count, default_config)
                         for input_name, img_index in config.items():
