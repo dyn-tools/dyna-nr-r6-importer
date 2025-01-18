@@ -1,8 +1,23 @@
-# Blender Add-on Template
-This is a boilerplate template to help you organize your Blender add-on code. You can even install and enable the template as-is, even though it doesn't do anything. Happy Blending!
+# R6 Material Autosetup Tool for NinjaRipper
 
-## How to download
-Ready to make your own Blender add-on? Download the latest code, copy it to your project folder, and get started!
-    
-    git clone https://github.com/lunadigital/blender-addon-template
-    cp ./blender-addon-template/* /path/to/your/project/folder
+This Blender add-on automates the material setup process for models extracted with NinjaRipper. Save time and effort by letting the tool handle the tedious work of fixing materials!
+
+## Features
+- Automatically configures materials for models ripped from R6.
+- Streamlines your workflow by eliminating manual material setup.
+
+## Quick Start Guide
+
+### How to Download and Install
+1. **Download the Add-on**:  
+   Download the latest release from the [Releases page](https://github.com/dyn-tools/dyna-nr-r6-importer/releases).
+
+2. **Install in Blender**:  
+   - Open Blender and go to `Edit > Preferences > Add-ons`.
+   - Click `Install...` and select the downloaded `.zip` file.
+   - Enable the add-on from the preferences window.
+
+3. You're ready to go! The tool will automatically set up materials for your imported R6 models.
+
+## Credits
+Special thanks to [NamNamR6](https://x.com/NamNamR6) for fixing the material shader nodegroup and adjusting the config.
