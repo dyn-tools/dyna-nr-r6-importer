@@ -14,18 +14,30 @@ class NODE_PT_AutoSetupPanel(Panel):
     def draw(self, context):
         layout = self.layout
 
+        # Create a box for mesh cleanup
+        box = layout.box()
+        box.label(text="Mesh Cleanup")
+
+        # Button for Delete Objects Without Texture
+        row = box.row()
+        row.operator("object.delete_without_texture", text="Delete Objects Without Texture")
+        
+        # Button for Delete Flat Artifacts
+        row = box.row()
+        row.operator("object.delete_flat_artifacts", text="Delete Flat Artifacts")
+
+
+        #Create a box for Material and Lighting Setup
+        box = layout.box()
+        box.label(text="Material and Lighting Setup")
+
         # Larger button for Auto Setup Node Group
-        row = layout.row()
+        row = box.row()
         row.scale_y = 2.0  # Set the scale to make the button larger
         row.operator("node.auto_setup_node_group", text="Auto Setup Node Group")
 
-        # Larger button for Delete Objects Without Texture
-        row = layout.row()
-        row.scale_y = 2.0  # Set the scale to make the button larger
-        row.operator("object.delete_without_texture", text="Delete Objects Without Texture")
-
         # Larger button for Create Lights From Material
-        row = layout.row()
+        row = box.row()
         row.scale_y = 2.0  # Set the scale to make the button larger
         row.operator("object.create_lights_from_material", text="Create Lights From Material")
 

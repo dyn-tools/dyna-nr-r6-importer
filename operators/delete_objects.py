@@ -31,8 +31,34 @@ class NODE_OT_DeleteObjectsWithoutTexture(bpy.types.Operator):
 
         return {'FINISHED'}
 
+class NODE_OT_DeleteFlatArtifactObjects(bpy.types.Operator):
+    """Delete all objects that are flat on the Z dimension"""
+    bl_idname = "object.delete_flat_artifacts"
+    bl_label = "Delete Flat Artifacts"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+
+        count = 0
+
+        bpy.ops.object.select_all(action='DESELECT')
+
+        for obj in bpy.data.objects:
+
+            if obj.type == 'MESH' and obj.visible_get():
+
+                if obj.dimensions.z == 0:
+
+                    bpy.data.objects.remove(obj)
+                    count += 1
+            
+        self.report({'INFO'}, f"Deleted {count} flat artifacts.")
+        return {'FINISHED'}
+
 def register():
     bpy.utils.register_class(NODE_OT_DeleteObjectsWithoutTexture)
+    bpy.utils.register_class(NODE_OT_DeleteFlatArtifactObjects)
 
 def unregister():
     bpy.utils.unregister_class(NODE_OT_DeleteObjectsWithoutTexture)
+    bpy.utils.unregister_class(NODE_OT_DeleteFlatArtifactObjects)
