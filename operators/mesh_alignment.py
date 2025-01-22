@@ -48,6 +48,8 @@ class NODE_PT_AlignToPlane(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
+        bpy.ops.object.rotation_clear(clear_delta=False)
+
         obj = context.active_object
         if obj is None or obj.type != 'MESH':
             self.report({'ERROR'}, "No mesh object selected")

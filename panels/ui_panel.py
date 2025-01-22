@@ -35,28 +35,26 @@ class NODE_PT_AutoSetupPanel(Panel):
         box = layout.box()
         box.label(text="Alignment Tools:")
 
-        row = box.row()
-        row.prop(align_props, "align_plane", text="Target Plane")
-        row = box.row()
-        row.operator("object.align_to_plane", text="Align Face")
 
-        # Button for Move to Gizmo
-        row = box.row()
         obj = context.object
         if obj and obj.type == 'MESH':
+            row = box.row()
+            row.prop(align_props, "align_plane", text="Target Plane")
+            row = box.row()
+            row.operator("object.align_to_plane", text="Align Face")
+
             # Check if any vertices are selected
             bm = bmesh.new()
             bm.from_mesh(obj.data)
             selected_verts = any(v.select for v in bm.verts)
             bm.free()
 
-            if not selected_verts:
-                box.label(text="No vertices selected.", icon='ERROR')
-
             # Enable button only if there are selected vertices
             row = box.row()
             row.enabled = selected_verts
             row.operator("object.move_to_gizmo", text="Move to Gizmo")
+            if not selected_verts:
+                box.label(text="No vertices selected.", icon='ERROR')
         else:
             box.label(text="Select a valid mesh object.", icon='ERROR')
 
