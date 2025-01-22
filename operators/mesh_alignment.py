@@ -64,7 +64,7 @@ class NODE_PT_AlignToPlane(bpy.types.Operator):
             return {'CANCELLED'}
 
         # Determine the target normal based on the selected plane
-        plane = context.scene.align_plane
+        plane = context.scene.align_props.align_plane
         target_normals = {
             'XY': Vector((0, 0, 1)),
             'YZ': Vector((1, 0, 0)),
