@@ -12,14 +12,14 @@ bl_info = {
     "category": "Import-Export",
 }
 
-import bpy
+import bpy # type: ignore
 import os
 import importlib
 
-from .operators import auto_setup, create_lights, delete_objects
+from .operators import auto_setup, create_lights, delete_objects, find_missing_textures
 from .panels import ui_panel
 
-modules = [auto_setup, create_lights, delete_objects
+modules = [auto_setup, create_lights, delete_objects, find_missing_textures
            , ui_panel]
 
 for module in modules:

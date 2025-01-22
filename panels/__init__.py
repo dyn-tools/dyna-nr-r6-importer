@@ -1,4 +1,4 @@
-import bpy
+import bpy # type: ignore
 
 from .ui_panel import NODE_PT_AutoSetupPanel
 

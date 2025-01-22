@@ -1,4 +1,4 @@
-import bpy
+import bpy # type: ignore
 import os
 
 def append_shader_group(group_name):

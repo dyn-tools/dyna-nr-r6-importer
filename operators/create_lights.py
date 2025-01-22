@@ -1,4 +1,4 @@
-import bpy
+import bpy # type: ignore
 
 class NODE_OT_CreateLightsFromMaterial(bpy.types.Operator):
     """
