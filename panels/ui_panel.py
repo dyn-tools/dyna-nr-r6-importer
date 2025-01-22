@@ -28,14 +28,17 @@ class NODE_PT_AutoSetupPanel(Panel):
         row.operator("object.delete_without_texture", text="Delete Objects Without Texture")
 
 
-    # Separate box for Alignment Tools
+        # Access the AlignmentSettings property group
+        align_props = context.scene.align_props
+
+    # Create a box for Alignment Tools
         box = layout.box()
         box.label(text="Alignment Tools:")
 
         row = box.row()
-        row.prop(context.scene, "align_plane", text="Target Plane")
+        row.prop(align_props, "align_plane", text="Target Plane")
         row = box.row()
-        row.operator("object.align_face", text="Align Face")
+        row.operator("object.align_to_plane", text="Align Face")
 
         # Button for Move to Gizmo
         row = box.row()
@@ -120,12 +123,12 @@ plane_items = [
 ]
 
 class AlignmentSettings(bpy.types.PropertyGroup):
-    bpy.types.Scene.align_plane = bpy.props.EnumProperty(
-    name="Align Plane",
-    description="Choose the plane to align the face to",
-    items=plane_items,
-    default='XY',
-)
+    align_plane: bpy.props.EnumProperty(
+        name="Align Plane",
+        description="Choose the plane to align the face to",
+        items=plane_items,
+        default='XY',
+    ) # type: ignore
 
 def register():
     bpy.utils.register_class(NODE_PT_AutoSetupPanel)
