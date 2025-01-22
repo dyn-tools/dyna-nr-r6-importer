@@ -12,6 +12,13 @@ class NODE_OT_FindMissingTextures(bpy.types.Operator):
         log_file_path = settings.log_file_path
         texture_folder = settings.texture_folder
 
+        if not os.path.exists(log_file_path):
+            self.report({'ERROR'}, f"Log file not found at {log_file_path}")
+            return {'CANCELLED'}
+        if not os.path.exists(texture_folder):
+            self.report({'ERROR'}, f"Texture folder not found at {texture_folder}")
+            return {'CANCELLED'}
+
         count = 0
 
         # Iterate over selected objects
@@ -30,12 +37,8 @@ class NODE_OT_FindMissingTextures(bpy.types.Operator):
 
                     textures_from_log = get_textures_for_object(log_file_path,texture_folder, object_name)
 
-                    if textures_from_log == "File not found":
-                        self.report({'ERROR'}, "Log file not found.")
-                        return {'CANCELLED'}
-                    else:
-                        # Ensure textures are added to the material
-                        count = ensure_textures_in_material(mat, textures_from_log, texture_folder)
+                    # Ensure textures are added to the material
+                    count = ensure_textures_in_material(mat, textures_from_log, texture_folder)
 
         self.report({'INFO'}, f"{count} missing textures appended.")
         return {'FINISHED'}
