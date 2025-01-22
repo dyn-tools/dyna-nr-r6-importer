@@ -16,10 +16,10 @@ import bpy # type: ignore
 import os
 import importlib
 
-from .operators import auto_setup, create_lights, delete_objects, find_missing_textures
+from .operators import auto_setup, create_lights, delete_objects, find_missing_textures, move_to_gizmo
 from .panels import ui_panel
 
-modules = [auto_setup, create_lights, delete_objects, find_missing_textures
+modules = [auto_setup, create_lights, delete_objects, find_missing_textures, move_to_gizmo
            , ui_panel]
 
 for module in modules:

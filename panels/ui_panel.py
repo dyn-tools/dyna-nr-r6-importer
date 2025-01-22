@@ -1,4 +1,5 @@
 import bpy # type: ignore
+import bmesh # type: ignore
 from bpy.types import Panel # type: ignore
 
 class NODE_PT_AutoSetupPanel(Panel):
@@ -25,6 +26,31 @@ class NODE_PT_AutoSetupPanel(Panel):
         # Button for Delete Objects Without Texture
         row = box.row()
         row.operator("object.delete_without_texture", text="Delete Objects Without Texture")
+
+    # Separate box for "Move to Gizmo" option
+        gizmo_box = layout.box()
+        gizmo_box.label(text="Alignment Tools:")
+        row = gizmo_box.row()
+
+        obj = context.object
+        if obj and obj.type == 'MESH':
+            # Check if any vertices are selected
+            bm = bmesh.new()
+            bm.from_mesh(obj.data)
+            selected_verts = any(v.select for v in bm.verts)
+            bm.free()
+
+            if not selected_verts:
+                gizmo_box.label(text="No vertices selected.", icon='ERROR')
+
+            # Enable button only if there are selected vertices
+            row = gizmo_box.row()
+            row.enabled = selected_verts
+            row.operator("object.move_to_gizmo", text="Move to Gizmo")
+        else:
+            gizmo_box.label(text="Select a valid mesh object.", icon='ERROR')
+
+
         
 
     #Create a box for Material and Lighting Setup
