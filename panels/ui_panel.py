@@ -27,11 +27,18 @@ class NODE_PT_AutoSetupPanel(Panel):
         row = box.row()
         row.operator("object.delete_without_texture", text="Delete Objects Without Texture")
 
-    # Separate box for "Move to Gizmo" option
-        gizmo_box = layout.box()
-        gizmo_box.label(text="Alignment Tools:")
-        row = gizmo_box.row()
 
+    # Separate box for Alignment Tools
+        box = layout.box()
+        box.label(text="Alignment Tools:")
+
+        row = box.row()
+        row.prop(context.scene, "align_plane", text="Target Plane")
+        row = box.row()
+        row.operator("object.align_face", text="Align Face")
+
+        # Button for Move to Gizmo
+        row = box.row()
         obj = context.object
         if obj and obj.type == 'MESH':
             # Check if any vertices are selected
@@ -41,17 +48,15 @@ class NODE_PT_AutoSetupPanel(Panel):
             bm.free()
 
             if not selected_verts:
-                gizmo_box.label(text="No vertices selected.", icon='ERROR')
+                box.label(text="No vertices selected.", icon='ERROR')
 
             # Enable button only if there are selected vertices
-            row = gizmo_box.row()
+            row = box.row()
             row.enabled = selected_verts
             row.operator("object.move_to_gizmo", text="Move to Gizmo")
         else:
-            gizmo_box.label(text="Select a valid mesh object.", icon='ERROR')
+            box.label(text="Select a valid mesh object.", icon='ERROR')
 
-
-        
 
     #Create a box for Material and Lighting Setup
         box = layout.box()
@@ -104,14 +109,38 @@ class TextureImportSettings(bpy.types.PropertyGroup):
         default=""
     ) # type: ignore
 
+
+plane_items = [
+    ('XY', "XY", "Align to XY plane"),
+    ('YZ', "YZ", "Align to YZ plane"),
+    ('XZ', "XZ", "Align to XZ plane"),
+    ('-XY', "-XY", "Align to -XY plane"),
+    ('-YZ', "-YZ", "Align to -YZ plane"),
+    ('-XZ', "-XZ", "Align to -XZ plane"),
+]
+
+class AlignmentSettings(bpy.types.PropertyGroup):
+    bpy.types.Scene.align_plane = bpy.props.EnumProperty(
+    name="Align Plane",
+    description="Choose the plane to align the face to",
+    items=plane_items,
+    default='XY',
+)
+
 def register():
     bpy.utils.register_class(NODE_PT_AutoSetupPanel)
 
     bpy.utils.register_class(TextureImportSettings)
     bpy.types.Scene.texture_import_settings = bpy.props.PointerProperty(type=TextureImportSettings)
 
+    bpy.utils.register_class(AlignmentSettings)
+    bpy.types.Scene.align_props = bpy.props.PointerProperty(type=AlignmentSettings)
+
 def unregister():
     bpy.utils.unregister_class(NODE_PT_AutoSetupPanel)
 
     bpy.utils.unregister_class(TextureImportSettings)
     del bpy.types.Scene.texture_import_settings
+
+    bpy.utils.unregister_class(AlignmentSettings)
+    del bpy.types.Scene.align_props
