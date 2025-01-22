@@ -61,3 +61,4 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(NODE_OT_DeleteObjectsWithoutTexture)
+    bpy.utils.unregister_class(NODE_OT_DeleteFlatArtifactObjects)
