@@ -42,7 +42,7 @@ class NODE_PT_AutoSetupPanel(Panel):
         row.operator("object.create_lights_from_material", text="Create Lights From Material")
 
 
-    #Create a box for Material and Lighting Setup
+    #Create a box for Findig Missing Textures
         box = layout.box()
         box.label(text="Find Missing Textures For Selected:")
 
@@ -60,10 +60,32 @@ class NODE_PT_AutoSetupPanel(Panel):
 
         # Button for Find Missing Textures
         row = box.row()
-        row.operator("texture.find_missing_textures_for_mat")
+        row.enabled = bool(settings.log_file_path and settings.texture_folder)# Disable the button if the input fields are not set
+        row.operator("texture.find_missing_textures")
+
+class TextureImportSettings(bpy.types.PropertyGroup):
+    log_file_path: bpy.props.StringProperty(
+        name="Log File Path",
+        description="Path to the log file",
+        subtype='FILE_PATH',
+        default=""
+    ) # type: ignore
+
+    texture_folder: bpy.props.StringProperty(
+        name="Texture Folder",
+        description="Path to the folder containing textures",
+        subtype='DIR_PATH',
+        default=""
+    ) # type: ignore
 
 def register():
     bpy.utils.register_class(NODE_PT_AutoSetupPanel)
 
+    bpy.utils.register_class(TextureImportSettings)
+    bpy.types.Scene.texture_import_settings = bpy.props.PointerProperty(type=TextureImportSettings)
+
 def unregister():
     bpy.utils.unregister_class(NODE_PT_AutoSetupPanel)
+
+    bpy.utils.unregister_class(TextureImportSettings)
+    del bpy.types.Scene.texture_import_settings

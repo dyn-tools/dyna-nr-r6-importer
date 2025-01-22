@@ -12,6 +12,8 @@ class NODE_OT_FindMissingTextures(bpy.types.Operator):
         log_file_path = settings.log_file_path
         texture_folder = settings.texture_folder
 
+        count = 0
+
         # Iterate over selected objects
         for obj in bpy.context.selected_objects:
 
@@ -25,10 +27,15 @@ class NODE_OT_FindMissingTextures(bpy.types.Operator):
 
                     # Gather object name and textures
                     object_name = obj.name.split('.')[0]  # Trims .001, .002, etc. from the object name
-                    textures_from_log = get_textures_for_object(log_file_path, object_name)
 
-                    # Ensure textures are added to the material
-                    count = ensure_textures_in_material(mat, textures_from_log, texture_folder)
+                    textures_from_log = get_textures_for_object(log_file_path,texture_folder, object_name)
+
+                    if textures_from_log == "File not found":
+                        self.report({'ERROR'}, "Log file not found.")
+                        return {'CANCELLED'}
+                    else:
+                        # Ensure textures are added to the material
+                        count = ensure_textures_in_material(mat, textures_from_log, texture_folder)
 
         self.report({'INFO'}, f"{count} missing textures appended.")
         return {'FINISHED'}
@@ -44,15 +51,15 @@ def get_textures_for_object(log_file_path, texture_folder, object_name):
     # Read the log file and extract relevant lines
     lines = []
     with open(log_file_path, "r") as log_file:
-        for line in log_file:
-            current_line = line.split(' ')
-            if len(current_line) > 3 and "Mesh(s)" == current_line[2]:
-                lines.append(line)
-            elif len(current_line) > 3 and "---Gathered" == current_line[2]:
-                lines.append(line)
-            elif len(current_line) >= 4 and "File" == current_line[3].split('=')[0]:
-                lines.append(line)
-
+            for line in log_file:
+                current_line = line.split(' ')
+                if len(current_line) > 3 and "Mesh(s)" == current_line[2]:
+                    lines.append(line)
+                elif len(current_line) > 3 and "---Gathered" == current_line[2]:
+                    lines.append(line)
+                elif len(current_line) >= 4 and "File" == current_line[3].split('=')[0]:
+                    lines.append(line)
+    
     # Locate the section for the specific object
     relevant_textures = []
     section_found = False
@@ -88,9 +95,12 @@ def ensure_textures_in_material(material, textures_from_log, texture_folder):
             material.use_nodes = True
 
         nodes = material.node_tree.nodes
-        existing_texture_names = [
-            node.image.name.split(".")[0] for node in nodes if node.type == "TEX_IMAGE" and node.image
-        ]
+        try:
+            existing_texture_names = [
+                node.image.name.split(".")[0] for node in nodes if node.type == "TEX_IMAGE" and node.image
+            ]
+        except:
+            print("No image textures found in material")
 
         count = 0
 
