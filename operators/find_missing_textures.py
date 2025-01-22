@@ -28,9 +28,9 @@ class NODE_OT_FindMissingTextures(bpy.types.Operator):
                     textures_from_log = get_textures_for_object(log_file_path, object_name)
 
                     # Ensure textures are added to the material
-                    ensure_textures_in_material(mat, textures_from_log, texture_folder)
+                    count = ensure_textures_in_material(mat, textures_from_log, texture_folder)
 
-        self.report({'INFO'}, "Textures from log file appended.")
+        self.report({'INFO'}, f"{count} missing textures appended.")
         return {'FINISHED'}
 
 
@@ -92,6 +92,8 @@ def ensure_textures_in_material(material, textures_from_log, texture_folder):
             node.image.name.split(".")[0] for node in nodes if node.type == "TEX_IMAGE" and node.image
         ]
 
+        count = 0
+
         for tex_file in textures_from_log:
             tex_name = tex_file.split(".")[0]
 
@@ -105,6 +107,10 @@ def ensure_textures_in_material(material, textures_from_log, texture_folder):
                     # Add a new image texture node to the material
                     tex_node = nodes.new("ShaderNodeTexImage")
                     tex_node.image = img
+
+                    count += 1
+
+        return count
                     
 
 def register():
