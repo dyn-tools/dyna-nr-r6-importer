@@ -1,7 +1,7 @@
 import bpy # type: ignore
 
 class SetActiveUVOperator(bpy.types.Operator):
-    bl_idname = "object.set_active_uv_operator"
+    bl_idname = "object.set_active_uv"
     bl_label = "Set Active UV"
     bl_description = "Set specified UV layer as active render and set UV index to 2"
     bl_options = {'REGISTER', 'UNDO'}

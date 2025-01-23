@@ -42,7 +42,7 @@ class NODE_PT_AutoSetupPanel(Panel):
             row = box.row()
             row.prop(align_props, "align_plane", text="Target Plane")
             row = box.row()
-            row.operator("object.align_to_plane", text="Align Face")
+            row.operator("object.align_to_plane", text="Align On Target Plane")
 
             # Check if any vertices are selected
             bm = bmesh.new()
@@ -65,9 +65,9 @@ class NODE_PT_AutoSetupPanel(Panel):
         box.label(text="Material and Lighting Setup")
 
         row = box.row()
-        row.prop(scene, "uv_layer_name")
+        row.prop(scene.uv_settings, "layer_name", text="UV Layer Name")
         row = box.row()
-        row.operator("object.set_active_uv_operator", text="Set Active UV").uv_name = scene.uv_layer_name
+        row.operator("object.set_active_uv", text="Set Active UV").uv_name = scene.uv_settings.layer_name
 
         # Button for Auto Setup Node Group
         row = box.row()
@@ -134,6 +134,13 @@ class AlignmentSettings(bpy.types.PropertyGroup):
         default='XY',
     ) # type: ignore
 
+class UvNamePropperty(bpy.types.PropertyGroup):
+    layer_name: bpy.props.StringProperty(
+        name="UV Layer Name",
+        description="Name of the UV layer to set as active render",
+        default="uv_2",
+    ) # type: ignore
+
 def register():
     bpy.utils.register_class(NODE_PT_AutoSetupPanel)
 
@@ -143,6 +150,9 @@ def register():
     bpy.utils.register_class(AlignmentSettings)
     bpy.types.Scene.align_props = bpy.props.PointerProperty(type=AlignmentSettings)
 
+    bpy.utils.register_class(UvNamePropperty)
+    bpy.types.Scene.uv_settings  = bpy.props.PointerProperty(type=UvNamePropperty)
+
 def unregister():
     bpy.utils.unregister_class(NODE_PT_AutoSetupPanel)
 
@@ -151,3 +161,6 @@ def unregister():
 
     bpy.utils.unregister_class(AlignmentSettings)
     del bpy.types.Scene.align_props
+
+    bpy.utils.unregister_class(UvNamePropperty)
+    del bpy.types.Scene.uv_settings 

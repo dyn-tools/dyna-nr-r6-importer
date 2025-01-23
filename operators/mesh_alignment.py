@@ -62,7 +62,7 @@ class NODE_PT_AlignToPlane(bpy.types.Operator):
         # Get the active face
         active_face = mesh.faces.active
         if active_face is None:
-            self.report({'ERROR'}, "No active face selected")
+            self.report({'ERROR'}, "Please select the face on which you want to align the objects.")
             return {'CANCELLED'}
 
         # Determine the target normal based on the selected plane
