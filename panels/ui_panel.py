@@ -16,7 +16,7 @@ class NODE_PT_AutoSetupPanel(Panel):
         layout = self.layout
         scene = context.scene
 
-    # Create a box for mesh cleanup
+# Create a box for mesh cleanup
         box = layout.box()
         box.label(text="Mesh Cleanup")
 
@@ -31,6 +31,14 @@ class NODE_PT_AutoSetupPanel(Panel):
 
         # Access the AlignmentSettings property group
         align_props = scene.align_props
+
+        # Create Section for Multi Rip Cleanup
+        row = box.row()
+        row.label(text="Multi Rip Cleanup:")
+
+        # Button for Material Merge
+        row = box.row()
+        row.operator("object.merge_duplicate_materials", text="Merge Duplicate Materials")
 
     # Create a box for Alignment Tools
         box = layout.box()
