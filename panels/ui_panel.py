@@ -40,6 +40,10 @@ class NODE_PT_AutoSetupPanel(Panel):
         row = box.row()
         row.operator("object.merge_duplicate_materials", text="Merge Duplicate Materials")
 
+        # Button for Delete Duplicate Objects
+        row = box.row()
+        row.operator("object.delete_duplicate_objects", text="Delete Duplicate Objects")
+
     # Create a box for Alignment Tools
         box = layout.box()
         box.label(text="Alignment Tools:")
