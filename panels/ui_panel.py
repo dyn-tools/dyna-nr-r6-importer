@@ -14,6 +14,7 @@ class NODE_PT_AutoSetupPanel(Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene
 
     # Create a box for mesh cleanup
         box = layout.box()
@@ -29,7 +30,7 @@ class NODE_PT_AutoSetupPanel(Panel):
 
 
         # Access the AlignmentSettings property group
-        align_props = context.scene.align_props
+        align_props = scene.align_props
 
     # Create a box for Alignment Tools
         box = layout.box()
@@ -63,6 +64,11 @@ class NODE_PT_AutoSetupPanel(Panel):
         box = layout.box()
         box.label(text="Material and Lighting Setup")
 
+        row = box.row()
+        row.prop(scene, "uv_layer_name")
+        row = box.row()
+        row.operator("object.set_active_uv_operator", text="Set Active UV").uv_name = scene.uv_layer_name
+
         # Button for Auto Setup Node Group
         row = box.row()
         row.scale_y = 2.0  # Set the scale to make the button larger
@@ -80,7 +86,7 @@ class NODE_PT_AutoSetupPanel(Panel):
 
         # Settings for Find Missing Textures
         row = box.row()
-        settings = context.scene.texture_import_settings
+        settings = scene.texture_import_settings
 
         # Property for log file path
         row = box.row()
