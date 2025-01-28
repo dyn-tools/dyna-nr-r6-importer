@@ -1,4 +1,4 @@
-import bpy
+import bpy # type: ignore
 import os
 
 def append_shader_group(group_name):
@@ -8,7 +8,7 @@ def append_shader_group(group_name):
     if group_name in [ng.name for ng in bpy.data.node_groups]:
         return bpy.data.node_groups[group_name]
 
-    addon_path = os.path.dirname(os.path.abspath(__file__))
+    addon_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     shader_file = os.path.join(addon_path, "shader_groups.blend")
 
     print(f"Attempting to load shader group '{group_name}' from {shader_file}...")

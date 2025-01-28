@@ -12,23 +12,26 @@ bl_info = {
     "category": "Import-Export",
 }
 
-import bpy
+import bpy # type: ignore
 import os
-from . import auto_setup, delete_objects, create_lights, ui_panel
+import importlib
 
+from .operators import auto_setup, create_lights, delete_objects, find_missing_textures, mesh_alignment, set_uv, multy_rip_cleanup
+from .panels import ui_panel
 
+modules = [auto_setup, create_lights, delete_objects, find_missing_textures, mesh_alignment, set_uv, multy_rip_cleanup
+           , ui_panel]
+
+for module in modules:
+    importlib.reload(module)
 
 def register():
-    auto_setup.register()
-    delete_objects.register()
-    create_lights.register()
-    ui_panel.register()
+    for module in modules:
+        module.register()
 
 def unregister():
-    ui_panel.unregister()
-    create_lights.unregister()
-    delete_objects.unregister()
-    auto_setup.unregister()
+    for module in modules:
+        module.unregister()
 
 if __name__ == "__main__":
     register()
