@@ -126,8 +126,50 @@ class NODE_OT_AutoSetup(bpy.types.Operator):
 
         return {'FINISHED'}
 
+class OBJECT_OT_SetVertexColor(bpy.types.Operator):
+    """Apply override color to vertex colors"""
+    bl_idname = "object.set_override_color"
+    bl_label = "Apply Override Color"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        color = context.scene.override_color
+        r, g, b= color
+        attr_name = "override_color"
+
+        # Ensure object is in object mode
+        bpy.ops.object.mode_set(mode='OBJECT')
+
+        # Loop through selected objects
+        for obj in context.selected_objects:
+            if obj.type == 'MESH':
+                
+                # Check if the attribute already exists and create it if not
+                if attr_name not in obj.color_attributes:
+                    color_attr = obj.color_attributes.new(name=attr_name, type='BYTE_COLOR', domain='POINT')
+                else:
+                    color_attr = obj.color_attributes[attr_name]
+
+                for i in range(len(obj.vertices)):
+                    color_attr.data[i].color = (r, g, b, 1.0)
+
+                obj.data.update()
+
+                # Update viewport shading to display vertex colors
+                if obj.active_material:
+                    obj.active_material.use_nodes = True
+                    if not obj.active_material.node_tree.nodes.get("Vertex Color"):
+                        bsdf = obj.active_material.node_tree.nodes.get("Principled BSDF")
+                        vcol_node = obj.active_material.node_tree.nodes.new("ShaderNodeVertexColor")
+                        vcol_node.layer_name = obj.data.vertex_colors.active.name
+                        obj.active_material.node_tree.links.new(vcol_node.outputs["Color"], bsdf.inputs["Base Color"])
+
+        return {'FINISHED'}
+
 def register():
     bpy.utils.register_class(NODE_OT_AutoSetup)
+    bpy.utils.register_class(OBJECT_OT_SetVertexColor)
 
 def unregister():
     bpy.utils.unregister_class(NODE_OT_AutoSetup)
+    bpy.utils.unregister_class(OBJECT_OT_SetVertexColor)
