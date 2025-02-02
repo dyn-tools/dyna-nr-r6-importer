@@ -14,7 +14,7 @@ DEFAULT_CONFIG_MAP = {
         "Normal Base": 1, "Mix Factor": None, "Diffuse 2": None, "Alpha Input 2": None, "PBR Multi 2": None, "Normal Base 2": None},
     6: {"Override Color": None, "Override Strength": None, "Diffuse": 3, "Alpha Input": None, "PBR Multi": 5,
         "Normal Base": 4, "Mix Factor": 0, "Diffuse 2": 0, "Alpha Input 2": None, "PBR Multi 2": 2, "Normal Base 2": 1},
-    7: {"Override Color": None, "Override Strength": None, "Diffuse": 3, "Alpha Input": None, "PBR Multi": 5,
+    7: {"Override Color": None, "Override Strength": 6, "Diffuse": 3, "Alpha Input": None, "PBR Multi": 5,
         "Normal Base": 4, "Mix Factor": 0, "Diffuse 2": 0, "Alpha Input 2": None, "PBR Multi 2": 2, "Normal Base 2": 1}
 }
 

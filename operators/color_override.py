@@ -1,4 +1,4 @@
-import bpy
+import bpy # type: ignore
 import platform
 import subprocess
 
@@ -14,7 +14,7 @@ class OBJECT_OT_SetVertexColor(bpy.types.Operator):
         color = context.scene.override_color
         r, g, b = color
         attr_name = "override_color"
-        mat_node_name = "Siege Object BSDF"
+        mat_node_name = "Group"
 
         for obj in context.selected_objects:
             if obj.type == 'MESH':
@@ -24,7 +24,7 @@ class OBJECT_OT_SetVertexColor(bpy.types.Operator):
                 else:
                     color_attr = obj.data.color_attributes[attr_name]
 
-                # Assign color to all vertices
+                # Assign color to all verticess
                 for i in range(len(obj.data.vertices)):
                     color_attr.data[i].color = (r, g, b, 1.0)
 
@@ -34,7 +34,7 @@ class OBJECT_OT_SetVertexColor(bpy.types.Operator):
                 if obj.active_material:
                     obj.active_material.use_nodes = True
                     bsdf = obj.active_material.node_tree.nodes.get(mat_node_name)
-                    
+                    print(bsdf)
                     if bsdf and "Override Color" in bsdf.inputs:
                         vcol_node = obj.active_material.node_tree.nodes.get("Vertex Color")
                         if not vcol_node:
