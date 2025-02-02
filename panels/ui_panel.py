@@ -16,7 +16,7 @@ class NODE_PT_AutoSetupPanel(Panel):
         layout = self.layout
         scene = context.scene
 
-        # Create a box for mesh cleanup
+    # Create a box for mesh cleanup
         box = layout.box()
         box.label(text="Mesh Cleanup")
         row = box.row()
@@ -24,10 +24,10 @@ class NODE_PT_AutoSetupPanel(Panel):
         row = box.row()
         row.operator("object.delete_without_texture", text="Delete Objects Without Texture")
 
-        # Access the AlignmentSettings property group
+    # Access the AlignmentSettings property group
         align_props = scene.align_props
 
-        # Create Section for Multi Rip Cleanup
+    # Create Section for Multi Rip Cleanup
         row = box.row()
         row.label(text="Multi Rip Cleanup:")
         row = box.row()
@@ -35,7 +35,7 @@ class NODE_PT_AutoSetupPanel(Panel):
         row = box.row()
         row.operator("object.delete_duplicate_objects", text="Delete Duplicate Objects")
 
-        # Create a box for Alignment Tools
+    # Create a box for Alignment Tools
         box = layout.box()
         box.label(text="Alignment Tools:")
         obj = context.object
@@ -57,7 +57,7 @@ class NODE_PT_AutoSetupPanel(Panel):
         else:
             box.label(text="Select a valid mesh object.", icon='ERROR')
 
-        # Create a box for Material and Lighting Setup
+    # Create a box for Material and Lighting Setup
         box = layout.box()
         box.label(text="Material and Lighting Setup")
         row = box.row()
@@ -79,7 +79,7 @@ class NODE_PT_AutoSetupPanel(Panel):
         row.scale_y = 2.0
         row.operator("node.auto_setup_node_group", text="Auto Setup Node Group")
 
-        # Create a box for Finding Missing Textures
+    # Create a box for Finding Missing Textures
         box = layout.box()
         box.label(text="Find Missing Textures For Selected:")
         settings = scene.texture_import_settings
@@ -90,6 +90,13 @@ class NODE_PT_AutoSetupPanel(Panel):
         row = box.row()
         row.enabled = bool(settings.log_file_path and settings.texture_folder)
         row.operator("texture.find_missing_textures")
+
+    # Create a box for Override Color Assignment
+        box = layout.box()
+        box.label(text="Assign Override Color:")
+        layout.prop(context.scene, "override_color", text="Color")
+        layout.operator("object.set_override_color")
+        layout.operator("object.copy_color")
 
 
 # Define the property group for the dropdown.

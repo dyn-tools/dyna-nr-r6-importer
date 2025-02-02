@@ -2,6 +2,8 @@ import bpy
 import platform
 import subprocess
 
+
+
 class OBJECT_OT_SetVertexColor(bpy.types.Operator):
     """Apply override color to vertex colors"""
     bl_idname = "object.set_override_color"
@@ -12,6 +14,7 @@ class OBJECT_OT_SetVertexColor(bpy.types.Operator):
         color = context.scene.override_color
         r, g, b = color
         attr_name = "override_color"
+
 
         for obj in context.selected_objects:
             if obj.type == 'MESH':
@@ -51,26 +54,29 @@ class OBJECT_OT_CopyColor(bpy.types.Operator):
     def execute(self, context):
         selected_objects = context.selected_objects
         active_object = context.view_layer.objects.active
+        attr_name = "override_color"
+
 
         if not active_object or active_object.type != 'MESH':
             self.report({'WARNING'}, "Active object is not a mesh.")
             return {'CANCELLED'}
 
-        if "override_color" not in active_object.data.attributes:
+        if attr_name not in active_object.data.attributes:
             self.report({'WARNING'}, "Active object does not have an override color.")
             return {'CANCELLED'}
 
-        color_attr = active_object.data.attributes["override_color"]
+        color_attr = active_object.data.attributes[attr_name]
         active_color = color_attr.data[0].color[:3]  # Get first stored color
 
         if len(selected_objects) > 1:
             for obj in selected_objects:
                 if obj != active_object and obj.type == 'MESH':
+
                     # Ensure override color exists
-                    if "override_color" not in obj.data.attributes:
-                        color_attr = obj.data.color_attributes.new(name="override_color", type='BYTE_COLOR', domain='POINT')
+                    if attr_name not in obj.data.attributes:
+                        color_attr = obj.data.color_attributes.new(name=attr_name, type='BYTE_COLOR', domain='POINT')
                     else:
-                        color_attr = obj.data.attributes["override_color"]
+                        color_attr = obj.data.attributes[attr_name]
 
                     # Assign color to all vertices
                     for i in range(len(obj.data.vertices)):
@@ -87,7 +93,7 @@ class OBJECT_OT_CopyColor(bpy.types.Operator):
                             vcol_node = obj.active_material.node_tree.nodes.get("Vertex Color")
                             if not vcol_node:
                                 vcol_node = obj.active_material.node_tree.nodes.new("ShaderNodeVertexColor")
-                            vcol_node.layer_name = "override_color"
+                            vcol_node.layer_name = attr_name
                             obj.active_material.node_tree.links.new(vcol_node.outputs["Color"], bsdf.inputs["Base Color"])
 
             self.report({'INFO'}, "Color copied to selected objects.")
@@ -103,6 +109,7 @@ class OBJECT_OT_CopyColor(bpy.types.Operator):
 
         return {'FINISHED'}
 
+
     def copy_to_clipboard(self, text):
         platform_name = platform.system()
         try:
@@ -115,24 +122,11 @@ class OBJECT_OT_CopyColor(bpy.types.Operator):
         except Exception as e:
             self.report({'WARNING'}, f"Failed to copy to clipboard: {e}")
 
-class PANEL_PT_OverrideColor(bpy.types.Panel):
-    """Creates a Panel in the N-Panel"""
-    bl_label = "Override Vertex Color"
-    bl_idname = "PANEL_PT_override_color"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = "Custom Color"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.prop(context.scene, "override_color", text="Color")
-        layout.operator("object.set_override_color")
-        layout.operator("object.copy_color")
 
 def register():
     bpy.utils.register_class(OBJECT_OT_SetVertexColor)
     bpy.utils.register_class(OBJECT_OT_CopyColor)
-    bpy.utils.register_class(PANEL_PT_OverrideColor)
+
     bpy.types.Scene.override_color = bpy.props.FloatVectorProperty(
         name="Override Color",
         subtype='COLOR',
@@ -144,7 +138,7 @@ def register():
 def unregister():
     bpy.utils.unregister_class(OBJECT_OT_SetVertexColor)
     bpy.utils.unregister_class(OBJECT_OT_CopyColor)
-    bpy.utils.unregister_class(PANEL_PT_OverrideColor)
+
     del bpy.types.Scene.override_color
 
 if __name__ == "__main__":
