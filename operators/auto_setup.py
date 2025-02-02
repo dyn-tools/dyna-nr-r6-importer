@@ -380,13 +380,12 @@ class NODE_OT_SetDefaultConfig(bpy.types.Operator):
         self.report({'INFO'}, f"Default config '{config_type}' applied.")
         return {'FINISHED'}
 
-
 def register():
+    bpy.utils.register_class(NODE_OT_SetDefaultConfig)
+    bpy.utils.register_class(NODE_OT_AutoSetupConfigAdjustment)
     bpy.utils.register_class(NODE_OT_AutoSetup)
-    bpy.utils.register_class(OBJECT_OT_SetVertexColor)
 
 def unregister():
     bpy.utils.unregister_class(NODE_OT_SetDefaultConfig)
     bpy.utils.unregister_class(NODE_OT_AutoSetupConfigAdjustment)
     bpy.utils.unregister_class(NODE_OT_AutoSetup)
-    bpy.utils.unregister_class(OBJECT_OT_SetVertexColor)

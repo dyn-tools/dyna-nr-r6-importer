@@ -1,6 +1,6 @@
 import bpy  # type: ignore
 import bmesh  # type: ignore
-from bpy.types import Panel
+from bpy.types import Panel # type: ignore
 
 class NODE_PT_AutoSetupPanel(Panel):
     """
@@ -103,7 +103,7 @@ class DefaultConfigSettings(bpy.types.PropertyGroup):
             ("GUN", "Gun/Gadget Setup", "Default config for guns/gadget materials")
         ],
         default="MAP"
-    )
+    ) # type: ignore
 
 
 class TextureImportSettings(bpy.types.PropertyGroup):
@@ -112,13 +112,13 @@ class TextureImportSettings(bpy.types.PropertyGroup):
         description="Path to the log file",
         subtype='FILE_PATH',
         default=""
-    )
+    )# type: ignore
     texture_folder: bpy.props.StringProperty(
         name="Texture Folder",
         description="Path to the folder containing textures",
         subtype='DIR_PATH',
         default=""
-    )
+    )# type: ignore
 
 
 plane_items = [
@@ -136,7 +136,7 @@ class AlignmentSettings(bpy.types.PropertyGroup):
         description="Choose the plane to align the face to",
         items=plane_items,
         default='XY'
-    )
+    )# type: ignore
 
 
 class UvNamePropperty(bpy.types.PropertyGroup):
@@ -144,7 +144,7 @@ class UvNamePropperty(bpy.types.PropertyGroup):
         name="UV Layer Name",
         description="Name of the UV layer to set as active render",
         default="uv_2"
-    )
+    )# type: ignore
 
 
 def register():
