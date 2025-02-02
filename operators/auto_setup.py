@@ -241,6 +241,10 @@ class NODE_OT_AutoSetup(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
+
+        # sets default config to currently selected config
+        set_default_config(context)
+
         # Ensure shader groups are loaded before use.
         load_shader_groups()
 
@@ -355,37 +359,25 @@ class NODE_OT_AutoSetupConfigAdjustment(bpy.types.Operator):
             self.report({'INFO'}, "No Text Editor area found. Open one to view the config.")
         self.report({'INFO'}, f"Config loaded in text block '{text_name}'.")
         return {'FINISHED'}
+ 
 
-
-class NODE_OT_SetDefaultConfig(bpy.types.Operator):
-    """
-    Operator to apply a default configuration based on the dropdown selection.
-    """
-    bl_idname = "node.set_default_config"
-    bl_label = "Apply Default Config"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        scene = context.scene
-        # The dropdown property is stored in scene.default_config_settings.default_config.
-        config_type = scene.default_config_settings.default_config
-        config = DEFAULT_CONFIG_MAPPING.get(config_type, DEFAULT_CONFIG_MAPPING["MAP"])
-        text_name = "config_switch.json"
-        if text_name in bpy.data.texts:
-            text_block = bpy.data.texts[text_name]
-            text_block.clear()
-        else:
-            text_block = bpy.data.texts.new(text_name)
-        text_block.write(json.dumps(config, indent=4))
-        self.report({'INFO'}, f"Default config '{config_type}' applied.")
-        return {'FINISHED'}
+def set_default_config(context):
+    scene = context.scene
+    # The dropdown property is stored in scene.default_config_settings.default_config.
+    config_type = scene.default_config_settings.default_config
+    config = DEFAULT_CONFIG_MAPPING.get(config_type, DEFAULT_CONFIG_MAPPING["MAP"])
+    text_name = "config_switch.json"
+    if text_name in bpy.data.texts:
+        text_block = bpy.data.texts[text_name]
+        text_block.clear()
+    else:
+        text_block = bpy.data.texts.new(text_name)
+    text_block.write(json.dumps(config, indent=4))
 
 def register():
-    bpy.utils.register_class(NODE_OT_SetDefaultConfig)
     bpy.utils.register_class(NODE_OT_AutoSetupConfigAdjustment)
     bpy.utils.register_class(NODE_OT_AutoSetup)
 
 def unregister():
-    bpy.utils.unregister_class(NODE_OT_SetDefaultConfig)
     bpy.utils.unregister_class(NODE_OT_AutoSetupConfigAdjustment)
     bpy.utils.unregister_class(NODE_OT_AutoSetup)

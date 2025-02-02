@@ -14,7 +14,7 @@ class OBJECT_OT_SetVertexColor(bpy.types.Operator):
         color = context.scene.override_color
         r, g, b = color
         attr_name = "override_color"
-
+        mat_node_name = "Siege Object BSDF"
 
         for obj in context.selected_objects:
             if obj.type == 'MESH':
@@ -33,14 +33,14 @@ class OBJECT_OT_SetVertexColor(bpy.types.Operator):
                 # Ensure material node tree updates
                 if obj.active_material:
                     obj.active_material.use_nodes = True
-                    bsdf = obj.active_material.node_tree.nodes.get("Principled BSDF")
+                    bsdf = obj.active_material.node_tree.nodes.get(mat_node_name)
                     
-                    if bsdf and "Base Color" in bsdf.inputs:
+                    if bsdf and "Override Color" in bsdf.inputs:
                         vcol_node = obj.active_material.node_tree.nodes.get("Vertex Color")
                         if not vcol_node:
                             vcol_node = obj.active_material.node_tree.nodes.new("ShaderNodeVertexColor")
                         vcol_node.layer_name = attr_name
-                        obj.active_material.node_tree.links.new(vcol_node.outputs["Color"], bsdf.inputs["Base Color"])
+                        obj.active_material.node_tree.links.new(vcol_node.outputs["Color"], bsdf.inputs["Override Color"])
 
         return {'FINISHED'}
 

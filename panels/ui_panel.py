@@ -67,14 +67,10 @@ class NODE_PT_AutoSetupPanel(Panel):
         row = box.row()
         row.scale_y = 2.0
         row.operator("object.create_lights_from_material", text="Create Lights From Material")
-        row = box.row()
-        box.label(text="Default Config Selection")
-        row.scale_y = 2.0
-        row.operator("node.auto_setup_config_adjustment", text="Create configfile in current blender project")
+        
         row = box.row()
         row.prop(scene.default_config_settings, "default_config", text="Default Config")
-        row = box.row()
-        row.operator("node.set_default_config", text="Set to selected Config")
+        row.operator("node.auto_setup_config_adjustment", text="", icon="GREASEPENCIL")
         row = box.row()
         row.scale_y = 2.0
         row.operator("node.auto_setup_node_group", text="Auto Setup Node Group")
@@ -94,9 +90,12 @@ class NODE_PT_AutoSetupPanel(Panel):
     # Create a box for Override Color Assignment
         box = layout.box()
         box.label(text="Assign Override Color:")
-        layout.prop(context.scene, "override_color", text="Color")
-        layout.operator("object.set_override_color")
-        layout.operator("object.copy_color")
+        row = box.row()
+        row.prop(context.scene, "override_color", text="Color")
+        row = box.row()
+        row.operator("object.set_override_color")
+        row = box.row()
+        row.operator("object.copy_color")
 
 
 # Define the property group for the dropdown.
