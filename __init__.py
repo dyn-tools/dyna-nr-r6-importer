@@ -2,7 +2,7 @@ bl_info = {
     "name": "Dyna R6 NR Importer",
     "description": "Tool for importing and managing NR assets in R6.",
     "author": "dyn4micfx",
-    "version": (2, 0),
+    "version": (2, 2, 2),
     "blender": (4, 1, 0),
     "location": "View3D > Sidebar > Dyna R6",
     "warning": "",
