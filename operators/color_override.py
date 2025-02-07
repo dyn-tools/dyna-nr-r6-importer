@@ -2,8 +2,6 @@ import bpy # type: ignore
 import platform
 import subprocess
 
-
-
 class OBJECT_OT_SetVertexColor(bpy.types.Operator):
     """Apply override color to vertex colors"""
     bl_idname = "object.set_override_color"
@@ -123,9 +121,72 @@ class OBJECT_OT_CopyColor(bpy.types.Operator):
             self.report({'WARNING'}, f"Failed to copy to clipboard: {e}")
 
 
+class OBJECT_OT_SelectObjectsContainingMaterials(bpy.types.Operator):
+    """Select all objects that share any material with the active object"""
+    bl_idname = "object.select_objects_containing_materials"
+    bl_label = "Select Mehes Containging Material"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        # Get the active object
+        obj = context.object
+
+        if obj is None or obj.type != 'MESH' or not obj.material_slots:
+            self.report({'WARNING'}, "No materials found on the selected object")
+            return {'CANCELLED'}
+
+        # Collect all materials from the active object
+        materials = {slot.material for slot in obj.material_slots if slot.material}
+
+        if not materials:
+            self.report({'WARNING'}, "No valid materials found")
+            return {'CANCELLED'}
+
+        # Deselect all objects
+        bpy.ops.object.select_all(action='DESELECT')
+
+        # Iterate through all objects and select those that share at least one material
+        for scene_obj in bpy.data.objects:
+            if scene_obj.type == 'MESH':
+                obj_materials = {slot.material for slot in scene_obj.material_slots if slot.material}
+                if materials & obj_materials:  # if any material matches
+                    scene_obj.select_set(True)
+
+        return {'FINISHED'}
+
+
+class OBJECT_OT_SelectObjectsContainingSelectedMaterial(bpy.types.Operator):
+    """Select all objects using the active material"""
+    bl_idname = "object.select_objects_containging_selected_material"
+    bl_label = "Select Meshes Containing Selected Material"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        # Get the active object
+        obj = context.object
+
+        if obj is None or obj.type != 'MESH' or not obj.active_material:
+            self.report({'WARNING'}, "No active material found on selected object")
+            return {'CANCELLED'}
+
+        material = obj.active_material
+
+        # Deselect all objects
+        bpy.ops.object.select_all(action='DESELECT')
+
+        # Iterate through all objects in the scene and select those using the material
+        for scene_obj in bpy.data.objects:
+            if scene_obj.type == 'MESH':
+                if material in [slot.material for slot in scene_obj.material_slots if slot.material]:
+                    scene_obj.select_set(True)
+
+        return {'FINISHED'}
+
 def register():
     bpy.utils.register_class(OBJECT_OT_SetVertexColor)
     bpy.utils.register_class(OBJECT_OT_CopyColor)
+    bpy.utils.register_class(OBJECT_OT_SelectObjectsContainingMaterials)
+    bpy.utils.register_class(OBJECT_OT_SelectObjectsContainingSelectedMaterial)
 
     bpy.types.Scene.override_color = bpy.props.FloatVectorProperty(
         name="Override Color",
@@ -138,6 +199,8 @@ def register():
 def unregister():
     bpy.utils.unregister_class(OBJECT_OT_SetVertexColor)
     bpy.utils.unregister_class(OBJECT_OT_CopyColor)
+    bpy.utils.unregister_class(OBJECT_OT_SelectObjectsContainingMaterials)
+    bpy.utils.unregister_class(OBJECT_OT_SelectObjectsContainingSelectedMaterial)
 
     del bpy.types.Scene.override_color
 

@@ -91,12 +91,24 @@ class NODE_PT_AutoSetupPanel(Panel):
         box = layout.box()
         box.label(text="Assign Override Color:")
         row = box.row()
+        button = row.operator("wm.call_menu", text="Select Mesh By Material")
+        button.name = "select_by_material_menu"
+        row = box.row()
         row.prop(context.scene, "override_color", text="Color")
         row = box.row()
         row.operator("object.set_override_color")
         row = box.row()
         row.operator("object.copy_color")
 
+
+class NODE_MT_MaterialSelectionPopup(bpy.types.Menu):
+    bl_label = "Select By Material"
+    bl_idname = "select_by_material_menu"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("object.select_objects_containing_materials", text="Every Material On Selected")
+        layout.operator("object.select_objects_containging_selected_material", text="Active Material")
 
 # Define the property group for the dropdown.
 class DefaultConfigSettings(bpy.types.PropertyGroup):
@@ -156,6 +168,9 @@ class UvNamePropperty(bpy.types.PropertyGroup):
 def register():
     bpy.utils.register_class(NODE_PT_AutoSetupPanel)
     bpy.utils.register_class(DefaultConfigSettings)
+    bpy.utils.register_class(NODE_MT_MaterialSelectionPopup)
+
+
     bpy.types.Scene.default_config_settings = bpy.props.PointerProperty(type=DefaultConfigSettings)
     bpy.utils.register_class(TextureImportSettings)
     bpy.types.Scene.texture_import_settings = bpy.props.PointerProperty(type=TextureImportSettings)
@@ -168,6 +183,9 @@ def register():
 def unregister():
     bpy.utils.unregister_class(NODE_PT_AutoSetupPanel)
     bpy.utils.unregister_class(DefaultConfigSettings)
+    bpy.utils.unregister_class(NODE_MT_MaterialSelectionPopup)
+
+
     del bpy.types.Scene.default_config_settings
     bpy.utils.unregister_class(TextureImportSettings)
     del bpy.types.Scene.texture_import_settings
